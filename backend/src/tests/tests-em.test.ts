@@ -52,14 +52,14 @@ describe('validateCandidateData', () => {
     '../application/validator',
   ) as typeof import('../application/validator');
 
-  it('should not throw when id is present', () => {
+  it('should skip validation and not throw when id is present, even with otherwise-invalid fields', () => {
     // Arrange
-    const data = { id: 1 };
+    const data = { id: 1, firstName: '', email: 'not-an-email' };
 
     // Act
     const call = () => sut(data);
 
-    // Assert
+    // Assert - update path bypasses field validation entirely
     expect(call).not.toThrow();
   });
 
@@ -172,6 +172,7 @@ describe('validateCandidateData', () => {
     ['missing institution', { institution: undefined }, 'Invalid institution'],
     ['institution too long', { institution: 'A'.repeat(101) }, 'Invalid institution'],
     ['missing title', { title: undefined }, 'Invalid title'],
+    ['title too long', { title: 'A'.repeat(101) }, 'Invalid title'],
     ['missing startDate', { startDate: undefined }, 'Invalid date'],
     ['invalid endDate', { endDate: 'not-a-date' }, 'Invalid end date'],
     ['valid', {}, ''],
@@ -202,7 +203,9 @@ describe('validateCandidateData', () => {
 
   it.each([
     ['missing company', { company: undefined }, 'Invalid company'],
+    ['company too long', { company: 'A'.repeat(101) }, 'Invalid company'],
     ['missing position', { position: undefined }, 'Invalid position'],
+    ['position too long', { position: 'A'.repeat(101) }, 'Invalid position'],
     ['description too long', { description: 'A'.repeat(201) }, 'Invalid description'],
     ['missing startDate', { startDate: undefined }, 'Invalid date'],
     ['invalid endDate', { endDate: 'bad-date' }, 'Invalid end date'],
