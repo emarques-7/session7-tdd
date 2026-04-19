@@ -83,8 +83,8 @@ export const validateCandidateData = (data: any) => {
         return;
     }
 
-    validateName(data.firstName); 
-    validateName(data.lastName); 
+    validateName(data.firstName);
+    validateName(data.lastName);
     validateEmail(data.email);
     validatePhone(data.phone);
     validateAddress(data.address);
@@ -101,7 +101,7 @@ export const validateCandidateData = (data: any) => {
         }
     }
 
-    if (data.cv && Object.keys(data.cv).length > 0) {
+    if (data.cv != null && (typeof data.cv !== 'object' || Object.keys(data.cv).length > 0)) {
         validateCV(data.cv);
     }
 };

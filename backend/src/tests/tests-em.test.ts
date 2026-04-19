@@ -238,6 +238,9 @@ describe('validateCandidateData', () => {
     ['missing fileType', { filePath: '/uploads/cv.pdf' }, true],
     ['empty object', {}, false],
     ['valid', { filePath: '/uploads/cv.pdf', fileType: 'application/pdf' }, false],
+    ['boolean true', true, true],
+    ['number', 1, true],
+    ['empty array', [], false],
   ])('should validate cv when %s', (_case, cv, shouldThrow) => {
     // Arrange
     const data = createValidCandidateData({ cv });

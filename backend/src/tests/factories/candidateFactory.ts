@@ -7,7 +7,7 @@ type CandidateData = {
   address?: string;
   educations?: Array<Record<string, unknown>>;
   workExperiences?: Array<Record<string, unknown>>;
-  cv?: Record<string, unknown>;
+  cv?: any;
 };
 
 export const createValidCandidateData = (
