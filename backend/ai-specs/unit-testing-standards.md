@@ -103,6 +103,68 @@ jest.mock('../../domain/models/Candidate');          // file top
 const MockCandidate = Candidate as jest.MockedClass<typeof Candidate>;
 ```
 
+### Obtaining typed references and stubbing instance methods after `jest.mock`
+Use `jest.mocked()` to get a typed handle on the mocked constructor, then configure the mock instance's methods in `beforeEach`:
+```typescript
+import { Candidate } from '../../domain/models/Candidate';
+jest.mock('../../domain/models/Candidate');
+
+const MockedCandidate = jest.mocked(Candidate);
+let mockCandidateInstance: jest.Mocked<Candidate>;
+
+beforeEach(() => {
+  mockCandidateInstance = {
+    save: jest.fn().mockResolvedValue({ id: 1, firstName: 'John' }),
+    education: [],
+    workExperience: [],
+    resumes: [],
+  } as unknown as jest.Mocked<Candidate>;
+  MockedCandidate.mockImplementation(() => mockCandidateInstance);
+});
+```
+Apply the same pattern for `Education`, `WorkExperience`, and `Resume` when testing the service layer.
+
+### Mocking Prisma delegates directly (domain model tests)
+When testing a domain model class that instantiates `PrismaClient` at module top-level, mock `@prisma/client` and stub the specific delegate methods:
+```typescript
+import { PrismaClient } from '@prisma/client';
+jest.mock('@prisma/client');
+
+const MockedPrismaClient = jest.mocked(PrismaClient);
+let mockPrisma: jest.Mocked<PrismaClient>;
+
+beforeEach(() => {
+  mockPrisma = {
+    candidate: {
+      create: jest.fn(),
+      update: jest.fn(),
+      findUnique: jest.fn(),
+    },
+  } as unknown as jest.Mocked<PrismaClient>;
+  MockedPrismaClient.mockImplementation(() => mockPrisma);
+});
+```
+
+### Sharing `jest.mock` declarations across multiple `describe` suites in one file
+When all test suites live in a single file, declare every `jest.mock(...)` at the very top of the file (Jest hoists them automatically). Each `describe` block is then responsible for configuring only the mocks it needs inside its own `beforeEach` — do not rely on setup from a sibling `describe`. Always call `jest.clearAllMocks()` in a top-level `afterEach` to reset all shared mocks between suites.
+```typescript
+// file top — all mocks declared once
+jest.mock('@prisma/client');
+jest.mock('../domain/models/Candidate');
+jest.mock('../application/services/candidateService');
+
+// each describe configures only what it needs
+describe('Candidate', () => {
+  beforeEach(() => { /* stub prisma delegates */ });
+});
+
+describe('addCandidate', () => {
+  beforeEach(() => { /* stub Candidate constructor + save */ });
+});
+
+afterEach(() => { jest.clearAllMocks(); });
+```
+
 ### Return value patterns
 ```typescript
 mockRepo.findById.mockResolvedValue(fixture);                             // async success

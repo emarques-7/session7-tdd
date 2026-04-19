@@ -1,0 +1,67 @@
+schema: spec-driven
+
+context: |
+  ## Project: LTI — Talent Tracking System
+  Recruitment platform for managing candidates through the hiring pipeline.
+
+  ## Tech Stack
+  - **Backend**: Node.js, Express 4, TypeScript 4.9, Prisma 5 (ORM), PostgreSQL
+  - **Frontend**: React 18, Create React App, React Bootstrap, React Router 6, TypeScript
+  - **Testing**: Jest 29, ts-jest, jest-mock-extended (backend); Jest + React Testing Library (frontend)
+  - **Infrastructure**: Docker Compose (PostgreSQL), Multer (file uploads)
+  - **Code Style**: ESLint + Prettier (singleQuote, trailingComma: all)
+
+  ## Architecture
+  Backend follows layered architecture (Clean Architecture):
+  - `presentation/controllers/` — Express request/response handling
+  - `application/services/` — business orchestration, validation
+  - `application/validator.ts` — pure validation functions with regex rules
+  - `domain/models/` — Active Record entities (Candidate, Education, WorkExperience, Resume) with Prisma
+  - `routes/` — Express route definitions
+
+  Frontend is component-based:
+  - `components/` — AddCandidateForm, FileUploader, RecruiterDashboard
+  - `services/` — API client layer (candidateService)
+
+  ## Domain Model
+  - **Candidate**: firstName, lastName, email (unique), phone?, address?
+  - **Education**: institution, title, startDate, endDate? → belongs to Candidate
+  - **WorkExperience**: company, position, description?, startDate, endDate? → belongs to Candidate
+  - **Resume**: filePath, fileType, uploadDate → belongs to Candidate
+
+  ## API
+  - `POST /candidates` — Create candidate with nested educations, workExperiences, cv
+  - `POST /upload` — Upload CV file (PDF/DOCX only, max 10MB)
+  - OpenAPI 3.0 spec at `backend/api-spec.yaml`
+
+  ## Conventions
+  - Backend port: 3010, Frontend port: 3000
+  - Test files: co-located `*.test.ts` (never `*.spec.ts`), AAA pattern, see `backend/ai-specs/unit-testing-standards.md`
+  - Prisma migrations in `backend/prisma/migrations/`
+  - Environment variables in root `.env` (DATABASE_URL, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT)
+  - Comments in codebase are in Spanish and English (bilingual team)
+
+rules:
+  proposal:
+    - Keep proposals concise (1-2 pages max)
+    - Always consider impact on existing Prisma schema and migrations
+    - Reference the OpenAPI spec (backend/api-spec.yaml) when proposing API changes
+    - Identify if changes affect both frontend and backend or just one layer
+    - Note any new npm dependencies required
+  specs:
+    - Align field constraints with Prisma schema (backend/prisma/schema.prisma) and validator rules (backend/src/application/validator.ts)
+    - Every API-facing requirement must reference the corresponding OpenAPI endpoint
+    - Include validation scenarios matching the existing regex patterns (name, email, phone, date)
+    - Scenarios must be concrete and testable following the unit testing standards in backend/ai-specs/unit-testing-standards.md
+  design:
+    - Preserve the existing layered architecture (presentation → application → domain)
+    - Domain models use Active Record pattern with Prisma — new entities must follow the same pattern
+    - Prefer extending existing services/controllers over creating new ones when scope allows
+    - Address database migration strategy for any schema changes
+    - Keep frontend changes aligned with React Bootstrap component library
+  tasks:
+    - Each task should be completable in one focused session (max 2 hours)
+    - Order tasks: Prisma schema → domain models → validators → services → controllers → routes → frontend
+    - Include a dedicated task for writing/updating unit tests per the standards in backend/ai-specs/unit-testing-standards.md
+    - Include a task for updating the OpenAPI spec (backend/api-spec.yaml) when API changes are involved
+    - Include a task for Prisma migration if schema changes are needed
