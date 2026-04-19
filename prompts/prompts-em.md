@@ -206,3 +206,39 @@ Updated `unit-testing-standards.md` `## Mocking` section with 3 new subsections 
 
 ---
 
+## Prompt 11: Apply OpenSpec Backend Test Change
+
+### User Prompt
+
+> @[/opsx-backendtest-apply] @[backend/openspec/changes/us-01-candidate-registration-tests] Also take the whole @[backend] project as context
+
+### AI Agent Response Summary
+
+**Final result:** Executed `/opsx-backendtest-apply` for `us-01-candidate-registration-tests`, implemented all required backend testing artifacts and code changes, ran coverage, and completed all tasks (`40/40`) with passing tests and thresholds met.
+
+---
+
+## Prompt 12: Archive OpenSpec Change
+
+### User Prompt
+
+> @[/opsx-archive] @[backend/openspec/changes/us-01-candidate-registration-tests]
+
+### AI Agent Response Summary
+
+**Final result:** Ran archive workflow checks (artifacts complete, tasks complete), assessed delta spec sync status, and requested sync/archive choice before finalizing.
+
+---
+
+## Prompt 13: Sync Choice Confirmation
+
+### User Prompt
+
+> 1
+
+### AI Agent Response Summary
+
+**Final result:** Synced delta specs into `openspec/specs/*` and archived the change to `backend/openspec/changes/archive/2026-04-19-us-01-candidate-registration-tests/`.
+
+---
+
